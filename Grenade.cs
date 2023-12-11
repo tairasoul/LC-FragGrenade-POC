@@ -142,16 +142,6 @@ namespace FragGrenade.LCMod
             hasExploded = true;
             itemAudio.PlayOneShot(explodeSFX);
             WalkieTalkie.TransmitOneShotAudio(itemAudio, explodeSFX, 1f);
-            Transform parent;
-            /*if (isInElevator)
-            {
-                parent = StartOfRound.Instance.elevatorTransform;
-            }
-            else
-            {
-                parent = RoundManager.Instance.mapPropsContainer.transform;
-            }
-            Instantiate(stunGrenadeExplosion, transform.position, Quaternion.identity, parent);*/
             StunExplosion(transform.position);
             if (DestroyGrenade)
             {
@@ -169,7 +159,7 @@ namespace FragGrenade.LCMod
         // Token: 0x06000F13 RID: 3859 RVA: 0x0007F184 File Offset: 0x0007D384
         public Vector3 GetGrenadeThrowDestination()
         {
-            Vector3 vector = transform.position;
+            Vector3 vector;
             Debug.DrawRay(playerHeldBy.gameplayCamera.transform.position, playerHeldBy.gameplayCamera.transform.forward, Color.yellow, 15f);
             grenadeThrowRay = new Ray(playerHeldBy.gameplayCamera.transform.position, playerHeldBy.gameplayCamera.transform.forward);
             if (Physics.Raycast(grenadeThrowRay, out grenadeHit, 12f, StartOfRound.Instance.collidersAndRoomMaskAndDefault))
@@ -208,7 +198,7 @@ namespace FragGrenade.LCMod
 
         // Token: 0x04000F0D RID: 3853
         [Header("Stun grenade settings")]
-        public float TimeToExplode = 4.25f;
+        public float TimeToExplode = Plugin.ExplosionTime.Value;
 
         // Token: 0x04000F0E RID: 3854
         public bool DestroyGrenade;

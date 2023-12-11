@@ -3,11 +3,9 @@ using BepInEx.Logging;
 using LC_API.ServerAPI;
 using LC_API.BundleAPI;
 using LethalLib.Modules;
-using Unity.Netcode;
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections;
+using BepInEx.Configuration;
 
 namespace FragGrenade.LCMod
 {
@@ -15,10 +13,12 @@ namespace FragGrenade.LCMod
     public class Plugin : BaseUnityPlugin
     {
         public static ManualLogSource Log;
+        public static ConfigEntry<float> ExplosionTime;
         //public static Mesh GrenadeMesh;
         public static bool init = false;
         internal void Awake()
         {
+            ExplosionTime = Config.Bind<float>("Grenades", "Detonation Time", 3f, "How long (in seconds) the fuse for the grenade is.");
             Log = Logger;
             Log.LogInfo("Initializing FragGrenade.");
             ModdedServer.SetServerModdedOnly();
@@ -94,7 +94,6 @@ namespace FragGrenade.LCMod
                 grenadeI.grenadeVerticalFallCurve = Origin.grenadeVerticalFallCurve;
                 grenadeI.grenadeVerticalFallCurveNoBounce = Origin.grenadeVerticalFallCurveNoBounce;
                 grenadeI.stunGrenadeExplosion = Origin.stunGrenadeExplosion;
-                grenadeI.TimeToExplode = Origin.TimeToExplode;
                 grenadeI.grenadeHit = Origin.grenadeHit;
                 grenadeI.grenadeThrowRay = Origin.grenadeThrowRay;
                 grenadeI.itemAnimator = Origin.itemAnimator;
