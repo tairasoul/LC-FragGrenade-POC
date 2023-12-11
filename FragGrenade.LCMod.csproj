@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>F:\SteamLibrary\steamapps\common\Lethal Company\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="LC_API">
+      <HintPath>..\ModdingAPIS\LethalCompany\LC_API.dll</HintPath>
+    </Reference>
+    <Reference Include="LethalLib">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Netcode.Runtime">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\Unity.Netcode.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AccessibilityModule">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\UnityEngine.AccessibilityModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AIModule">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\UnityEngine.AIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.DirectorModule">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\UnityEngine.DirectorModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\ModdingAPIS\LethalCompany\LethalAPI\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="cd &quot;$(TargetDir)&quot;&#xA;&#xA;for %25%25I in (*) do (&#xA;    if not &quot;%25%25~nxI&quot;==&quot;$(TargetName).dll&quot; (&#xA;        del &quot;%25%25~fI&quot;&#xA;    )&#xA;)" />
+  </Target>
+
+</Project>
