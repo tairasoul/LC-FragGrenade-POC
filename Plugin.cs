@@ -5,7 +5,8 @@ using LC_API.BundleAPI;
 using LethalLib.Modules;
 using System;
 using UnityEngine;
-using BepInEx.Configuration;
+using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 namespace FragGrenade.LCMod
 {
@@ -13,15 +14,12 @@ namespace FragGrenade.LCMod
     public class Plugin : BaseUnityPlugin
     {
         public static ManualLogSource Log;
-        public static ConfigEntry<float> ExplosionTime;
         //public static Mesh GrenadeMesh;
         public static bool init = false;
         internal void Awake()
         {
-            ExplosionTime = Config.Bind<float>("Grenades", "Detonation Time", 3f, "How long (in seconds) the fuse for the grenade is.");
             Log = Logger;
             Log.LogInfo("Initializing FragGrenade.");
-            ModdedServer.SetServerModdedOnly();
             Log.LogInfo("Waiting for Init.");
         }
 
@@ -39,27 +37,51 @@ namespace FragGrenade.LCMod
         {
             if (!init)
             {
+                Log.LogInfo("Starting init.");
+                SceneManager.activeSceneChanged += SceneManager_activeSceneChanged;
                 init = true;
-                RegisterFragGrenade();
                 BundleLoader.OnLoadedBundles += RealInit;
             }
         }
 
+        private void SceneManager_activeSceneChanged(Scene arg0, Scene arg1)
+        {
+            if (arg1.name == "MainMenu")
+            {
+                Log.LogInfo("MainMenu loaded.");
+                RegisterFragGrenade();
+                SceneManager.activeSceneChanged -= SceneManager_activeSceneChanged;
+            }
+        }
 
         private void RegisterFragGrenade()
         {
             try
             {
                 Log.LogInfo("Getting Origin GameObject.");
-                GameObject StunOrigin = Resources.InstanceIDToObject(13958) as GameObject;
+                List<GameObject> ResList = new List<GameObject>();
+                foreach (UnityEngine.Object obj in Resources.FindObjectsOfTypeAll<GameObject>())
+                {
+                    GameObject go = obj as GameObject;
+                    if (go.transform.parent == null && !go.scene.IsValid())
+                    {
+                        ResList.Add(go);
+                    }
+                }
+                GameObject[] Res = ResList.ToArray();
+                GameObject StunOrigin = null;
+                foreach (GameObject obj in Res)
+                {
+                    if (obj.name == "StunGrenade") StunOrigin = obj;
+                }
                 Log.LogInfo("Finding StunGrenadeItem");
                 StunGrenadeItem Origin = StunOrigin.GetComponent<StunGrenadeItem>();
                 Item stunGrenade = Origin.itemProperties;
                 Item grenade = new Item
                 {
                     canBeGrabbedBeforeGameStart = false,
-                    itemId = Items.shopItems.Count + 1,
-                    itemName = "Grenade",
+                    itemId = 4,
+                    itemName = "Frag grenade",
                     itemSpawnsOnGround = false,
                     requiresBattery = false,
                     dropSFX = stunGrenade.dropSFX,
@@ -73,9 +95,9 @@ namespace FragGrenade.LCMod
                     holdButtonUse = true,
                     allowDroppingAheadOfPlayer = true,
                     highestSalePercentage = 90,
-                    weight = 0.875f
+                    weight = 0.875f,
+                    name = "GrenadeProps"
                 };
-                grenade.name = "GrenadeProps";
                 Log.LogInfo("Creating prefab.");
                 grenade.spawnPrefab = Instantiate(StunOrigin);
                 grenade.spawnPrefab.name = "FragGrenade";
@@ -105,6 +127,7 @@ namespace FragGrenade.LCMod
                 grenadeI.reachedFloorTarget = false;
                 grenadeI.targetFloorPosition = Vector3.zero;
                 Destroy(grenade.spawnPrefab.GetComponent<StunGrenadeItem>());
+                NetworkPrefabs.RegisterNetworkPrefab(grenade.spawnPrefab);
                 Items.RegisterShopItem(grenade, 30);
                 Log.LogInfo("Registered and initialized FragGrenade.");
             }
@@ -116,7 +139,14 @@ namespace FragGrenade.LCMod
 
         internal void RealInit()
         {
-            //GrenadeMesh = BundleLoader.GetLoadedAsset<Mesh>("assets/GrenadeMesh");
+            SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
+            {
+                if (scene.name == "MainMenu")
+                {
+                    Log.LogInfo("Registering frag grenade.");
+                    RegisterFragGrenade();
+                }
+            };
         }
     }
 }

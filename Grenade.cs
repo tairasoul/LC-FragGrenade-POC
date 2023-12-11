@@ -1,4 +1,5 @@
 ﻿using GameNetcodeStuff;
+using LC_API.ServerAPI;
 using System.Collections;
 using UnityEngine;
 
@@ -153,7 +154,7 @@ namespace FragGrenade.LCMod
         // Token: 0x06000F12 RID: 3858 RVA: 0x0007EF04 File Offset: 0x0007D104
         public static void StunExplosion(Vector3 explosionPosition)
         {
-            Landmine.SpawnExplosion(explosionPosition, true, killRange: 8f, damageRange: 12f);
+            Landmine.SpawnExplosion(explosionPosition, true);
         }
 
         // Token: 0x06000F13 RID: 3859 RVA: 0x0007F184 File Offset: 0x0007D384
@@ -198,7 +199,7 @@ namespace FragGrenade.LCMod
 
         // Token: 0x04000F0D RID: 3853
         [Header("Stun grenade settings")]
-        public float TimeToExplode = Plugin.ExplosionTime.Value;
+        public float TimeToExplode = 2.5f;
 
         // Token: 0x04000F0E RID: 3854
         public bool DestroyGrenade;
